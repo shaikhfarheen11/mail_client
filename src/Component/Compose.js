@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './Compose.css';
 import RemoveIcon from '@material-ui/icons/Remove';
+import {Button, Form, Row } from 'react-bootstrap';
 import HeightIcon from '@material-ui/icons/Height';
 import CloseIcon from '@material-ui/icons/Close';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -17,13 +18,18 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { closeSendMessage } from "./store/mailSlice";
 import { useDispatch } from "react-redux";
 
-function Compose({ onSend }) { // Accept the onSend prop
+
+function Compose({ onSend }) {
     const [to, setTo] = useState("");
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [timestamp, setTimestamp] = useState("");
     const dispatch = useDispatch();
+
+    const handleClose = () => {
+        dispatch(closeSendMessage());
+    };
 
     const formSubmit = async (e) => {
         e.preventDefault();
@@ -44,7 +50,7 @@ function Compose({ onSend }) { // Accept the onSend prop
         const currentTimestamp = new Date().toLocaleString();
 
         try {
-            const response = await fetch('https://react-mail-2c482-default-rtdb.firebaseio.com/emails.json', {
+            const response = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +71,6 @@ function Compose({ onSend }) { // Accept the onSend prop
             setShowSuccessMessage(true);
             setTimestamp(currentTimestamp);
 
-            // Clear input fields after sending the message
             setTo("");
             setSubject("");
             setMessage("");
@@ -74,8 +79,6 @@ function Compose({ onSend }) { // Accept the onSend prop
                 setShowSuccessMessage(false);
                 dispatch(closeSendMessage());
             }, 3000);
-
-            // Call the onSend prop with composed message
             onSend({
                 to: sanitizedTo,
                 subject: sanitizedSubject,
@@ -98,23 +101,29 @@ function Compose({ onSend }) { // Accept the onSend prop
                 <div className="compose__header__right">
                     <RemoveIcon />
                     <HeightIcon />
-                    <CloseIcon onClick={() => dispatch(closeSendMessage())} />
+                    <CloseIcon onClick={handleClose} />
                 </div>
             </div>
-            <form onSubmit={formSubmit}>
+            <Form onSubmit={formSubmit}>
                 <div className="compose__body">
                     <div className="compose__bodyForm">
-                        <input type="email" name="email" placeholder="Recipients" value={to} onChange={(e) => setTo(e.target.value)} />
-                        <input type="text" name="subject" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
-                        <textarea rows="20" name="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)}></textarea>
+                <Form.Group as={Row}>
+                   <Form.Control type="email" placeholder="Recipients" value={to} onChange={(e) => setTo(e.target.value)} />
+                            
+                 </Form.Group>
+              <Form.Group as={Row}>
+            <Form.Control type="text" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
+                   
+            </Form.Group>
+            <Form.Group as={Row}>
+           <Form.Control as="textarea" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
+                        </Form.Group>
                     </div>
                 </div>
                 <div className="compose__footer">
-                    <div className="compose__footerLeft">
-                        <button type="submit">
-                            Send <ArrowDropDownIcon />
-                        </button>
-                    </div>
+                    <Button type="submit">
+                        Send <ArrowDropDownIcon />
+                    </Button>
                     <div className="compose__footerRight">
                         <FormatColorTextIcon />
                         <AttachFileIcon />
@@ -128,7 +137,7 @@ function Compose({ onSend }) { // Accept the onSend prop
                         <DeleteIcon />
                     </div>
                 </div>
-            </form>
+            </Form>
         </div>
     );
 }

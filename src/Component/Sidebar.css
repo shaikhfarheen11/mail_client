@@ -11,4 +11,7 @@
     margin-bottom: 20px !important;
     margin-left: 10px !important;
     max-width: 150px;
+    background-color:turquoise;
+    color: black;
+    font-weight: 500;
 }

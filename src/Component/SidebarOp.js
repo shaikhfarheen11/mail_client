@@ -1,4 +1,5 @@
 import React from "react";
+import { Badge } from 'react-bootstrap';
 import "./SidebarOp.css";
 
 function SidebarOp({ Icon, title, number, isactive }) {
@@ -8,7 +9,7 @@ function SidebarOp({ Icon, title, number, isactive }) {
         <Icon />
         <h4>{title}</h4>
       </div>
-      {isactive && <p>{number}</p>}
+      {isactive && <Badge>{number}</Badge>}
     </div>
   );
 }

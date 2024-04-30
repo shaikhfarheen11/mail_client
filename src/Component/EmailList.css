@@ -18,8 +18,8 @@ border-bottom: 1px solid whitesmoke;
 }
 .emaillist__settingsRight {
     display: flex;
-    align-items: center;
     font-weight: bold;
+    margin-left: 70%;
 
 }
 .emaillist__settingsRight p {
@@ -29,6 +29,7 @@ border-bottom: 1px solid whitesmoke;
     display: flex;
     align-items: center;
     border-bottom: 1px solid whitesmoke;
+    margin-right: 3rem;
 }
 .emailtype > .emailtype__options{
     display: flex;
@@ -135,6 +136,11 @@ margin-left: 100px;
     margin-top: 2rem;
     display: flex;
     align-items: center;
+  
+}
+.emaildetails__headerRight{
+    margin-left: 82%;
+    
 }
 
 .emaillist__Set {
@@ -168,8 +174,7 @@ margin-right: 2rem;
 }
 .emaildetails__middleheaderRight{
     display: flex;
-    align-items: center;
-    /* margin-right: 10rem; */
+    margin-left: 57%;
 }
 .emaildetails__middleheaderRight svg{
     font-size: 22px;
@@ -189,12 +194,13 @@ margin-right: 2rem;
     box-shadow: 0px 0px 4px rgb(179, 178, 178);
     margin-left: 16rem;
     margin-right: 2.5rem;
-    /* height: 100% !important; */
     height: calc(90vh - 7rem); 
   }
   .blue-dot {
-    width: 10px;
-    height: 10px;
+    width: 11px;
+    height: 11px;
     background-color: blue;
     border-radius: 50%;
-}
+    position: absolute;
+
+  }

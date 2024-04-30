@@ -10,7 +10,6 @@ import Compose from './Component/Compose';
 import { useSelector } from 'react-redux';
 import { selectSendMessageIsOpen } from './Component/store/mailSlice';
 import EmailDetails from './Component/EmailDetails';
-
 function App() {
   const isMessageOpen = useSelector(selectSendMessageIsOpen);
   console.log(isMessageOpen);

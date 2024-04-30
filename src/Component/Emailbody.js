@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import StarBorderIcon from "@material-ui/icons/StarBorder";
-import LabelOutlinedIcon from "@material-ui/icons/LabelOutlined";
+import { Row, Col, Badge, Button } from "react-bootstrap";
+import { CheckBoxOutlineBlank, StarBorder, LabelOutlined, Delete } from '@material-ui/icons';
 import './EmailList.css';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -20,9 +19,7 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
             message,
             time
         }));
-        // Navigate to the mail page
         navigate('/mail');
-        // Mark the message as read
         setIsRead(true);
     };
     
@@ -31,30 +28,62 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
 
     const handleEmailClick = () => {
         if (isNew && !isRead) {
-            // Update isNew state to false when the email is clicked
             setIsRead(true);
         }
         handleOpenMessage();
     };
 
+    const handleDelete = async () => {
+        try {
+            const response = await fetch(`https://mail-client-da555-default-rtdb.firebaseio.com/${id}.json`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete email');
+            }
+
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting email:', error);
+        }
+    };
+
     return (
         <div className={`emailbody ${isNew && !isRead ? 'new-message' : ''}`} onClick={handleEmailClick}>
-            <div className="emailbody__left">
-                <CheckBoxOutlineBlankIcon/>
-                <StarBorderIcon/>
-                <LabelOutlinedIcon/>
-                <h4>{name}</h4>
+            <Row className="emailbody__left">
+                <Col>
+                    <CheckBoxOutlineBlank />
+                </Col>
+                <Col>
+                    <StarBorder />
+                </Col>
+                <Col>
+                    <LabelOutlined />
+                </Col>
+                <Col>
+                    <h4>{name}</h4>
+                </Col>
+            </Row>
+            <Row className="emailbody__middle">
+                <Col>
+                    <div className="emailbody__middle__msg">
+                        <p><b>{subject}</b> {message}</p>
+                    </div>
+                </Col>
+            </Row>
+            <Row className="emailbody__right">
+                <Col>
+                    <p>{messageDate}</p>
+                </Col>
+                <Col>
+                    <p>{messageTime}</p>
+                </Col>
+            </Row>
+            {isNew && !isRead && <Badge className="blue-dot" />}
+            <div className="emailbody__delete" onClick={(e) => { e.stopPropagation(); handleDelete(); }}>
+                <Button variant="link"><Delete /></Button>
             </div>
-            <div className="emailbody__middle">
-                <div className="emailbody__middle__msg">
-                    <p><b>{subject}</b> {message}</p>
-                </div>
-            </div>
-            <div className="emailbody__right">
-                <p>{messageDate}</p>
-                <p>{messageTime}</p>
-            </div>
-            {isNew && !isRead && <div className="blue-dot"></div>} 
         </div>
     );
 }

@@ -11,7 +11,7 @@ export const mailSlice = createSlice({
             state.sendMessageIsOpen= true
         },
         closeSendMessage: (state) => {
-            state.sendMessageIsOpen= true
+            state.sendMessageIsOpen= false
         },
         openMessage: (state,action) => {
             state.selectedMessage= action.payload

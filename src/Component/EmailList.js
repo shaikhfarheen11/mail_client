@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import './EmailList.css';
+import { Container, Row, Col } from "react-bootstrap";
 import EmailListSetting from "./EmailListSetting";
 import EmailType from "./EmailType";
 import Emailbody from "./Emailbody";
@@ -29,24 +29,42 @@ function Emaillist() {
         }
     };
 
+    const handleClose = () => {
+        console.log("Compose component closed");
+    };
+
     return (
-        <div className="emaillist">
-            <EmailListSetting />
-            <EmailType />
-            <Compose onSend={handleSend} /> 
-            {emails.map(({ id, data, isNew }) => ( 
-                <Emailbody
-                    key={id}
-                    name={data.to}
-                    subject={data.subject}
-                    message={data.message}
-                    time={data.timestamp}
-                    isNew={isNew} 
-                />
-            ))}
-        </div>
+        <Container fluid className="emaillist">
+            <Row>
+                <Col>
+                    <EmailListSetting />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <EmailType />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <Compose onSend={handleSend} onClose={handleClose} /> 
+                </Col>
+            </Row>
+            <Row>
+                {emails.map(({ id, data, isNew }) => ( 
+                    <Col key={id}>
+                        <Emailbody
+                            name={data.to}
+                            subject={data.subject}
+                            message={data.message}
+                            time={data.timestamp}
+                            isNew={isNew} 
+                        />
+                    </Col>
+                ))}
+            </Row>
+        </Container>
     );
 }
-
 
 export default Emaillist;

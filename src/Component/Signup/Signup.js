@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -24,7 +23,7 @@ const Signup = () => {
     }
   
     try {
-        const firebaseResponse = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBvTNkajFcyatpcA2-ZgIImDtbN7Y614Vw ', {
+        const firebaseResponse = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCV5PF3StNEQRWcAvE_gDgzP_yU9ltwkuA', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
