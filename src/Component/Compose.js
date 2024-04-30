@@ -33,22 +33,24 @@ function Compose({ onSend }) {
 
     const formSubmit = async (e) => {
         e.preventDefault();
-        const sanitizedTo = to.trim().replace(/[@.]/g, "");
+        const sanitizedTo = to.trim();
         const sanitizedSubject = subject.trim();
         const sanitizedMessage = message.trim();
-
-        if (sanitizedTo === "") {
-            return alert("To is required");
+    
+        // Validate email format
+        if (!sanitizedTo.includes("@")) {
+            return alert("Please enter a valid email address");
         }
+    
         if (sanitizedSubject === "") {
             return alert("Subject is required");
         }
         if (sanitizedMessage === "") {
             return alert("Message is required");
         }
-
+    
         const currentTimestamp = new Date().toLocaleString();
-
+    
         try {
             const response = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
                 method: 'POST',
@@ -62,19 +64,19 @@ function Compose({ onSend }) {
                     timestamp: currentTimestamp
                 }),
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to send data to the database');
             }
-
+    
             console.log("Email sent successfully");
             setShowSuccessMessage(true);
             setTimestamp(currentTimestamp);
-
+    
             setTo("");
             setSubject("");
             setMessage("");
-
+    
             setTimeout(() => {
                 setShowSuccessMessage(false);
                 dispatch(closeSendMessage());
@@ -89,7 +91,7 @@ function Compose({ onSend }) {
             console.error("Error sending email:", error);
         }
     };
-
+    
     return (
         <div className="compose">
             <div className="success-message" style={{ display: showSuccessMessage ? "block" : "none" }}>Email sent successfully at {timestamp}</div>

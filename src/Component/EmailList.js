@@ -28,42 +28,30 @@ function Emaillist() {
             console.error("Error sending email:", error);
         }
     };
-
-    const handleClose = () => {
-        console.log("Compose component closed");
-    };
+    
+    
 
     return (
-        <Container fluid className="emaillist">
-            <Row>
-                <Col>
-                    <EmailListSetting />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <EmailType />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Compose onSend={handleSend} onClose={handleClose} /> 
-                </Col>
-            </Row>
-            <Row>
+        <div className="emaillist">
+            <EmailListSetting />
+            <EmailType />
+            <Compose onSend={handleSend} /> 
+            <Container fluid>
                 {emails.map(({ id, data, isNew }) => ( 
-                    <Col key={id}>
-                        <Emailbody
-                            name={data.to}
-                            subject={data.subject}
-                            message={data.message}
-                            time={data.timestamp}
-                            isNew={isNew} 
-                        />
-                    </Col>
+                    <Row key={id}>
+                        <Col>
+                            <Emailbody
+                                name={data.to}
+                                subject={data.subject}
+                                message={data.message}
+                                time={data.timestamp}
+                                isNew={isNew} 
+                            />
+                        </Col>
+                    </Row>
                 ))}
-            </Row>
-        </Container>
+            </Container>
+        </div>
     );
 }
 
