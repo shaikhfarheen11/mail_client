@@ -36,8 +36,7 @@ function Compose({ onSend }) {
         const sanitizedTo = to.trim();
         const sanitizedSubject = subject.trim();
         const sanitizedMessage = message.trim();
-    
-        // Validate email format
+
         if (!sanitizedTo.includes("@")) {
             return alert("Please enter a valid email address");
         }
@@ -52,7 +51,7 @@ function Compose({ onSend }) {
         const currentTimestamp = new Date().toLocaleString();
     
         try {
-            const response = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
+            const emailsResponse = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,8 +64,25 @@ function Compose({ onSend }) {
                 }),
             });
     
-            if (!response.ok) {
-                throw new Error('Failed to send data to the database');
+            if (!emailsResponse.ok) {
+                throw new Error('Failed to send data to the emails.json endpoint');
+            }
+    
+            const sentResponse = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/sent.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: sanitizedTo,
+                    subject: sanitizedSubject,
+                    message: sanitizedMessage,
+                    timestamp: currentTimestamp
+                }),
+            });
+    
+            if (!sentResponse.ok) {
+                throw new Error('Failed to send data to the sent.json endpoint');
             }
     
             console.log("Email sent successfully");

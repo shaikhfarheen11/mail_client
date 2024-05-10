@@ -4,7 +4,6 @@ import EmailListSetting from "./EmailListSetting";
 import EmailType from "./EmailType";
 import Emailbody from "./Emailbody";
 import db from "./firebase"; 
-import Compose from "./Compose";
 
 function Emaillist() {
     const [emails, setEmails] = useState([]);
@@ -19,23 +18,12 @@ function Emaillist() {
         })
     }, []);
 
-    const handleSend = async (composedMessage) => {
-        try {
-            await db.collection("emails").add(composedMessage);
-            console.log("Message sent successfully");
-            setEmails([...emails, { id: Math.random(), data: composedMessage, isNew: true }]);
-        } catch (error) {
-            console.error("Error sending email:", error);
-        }
-    };
-    
-    
 
     return (
         <div className="emaillist">
             <EmailListSetting />
             <EmailType />
-            <Compose onSend={handleSend} /> 
+
             <Container fluid>
                 {emails.map(({ id, data, isNew }) => ( 
                     <Row key={id}>
@@ -56,4 +44,3 @@ function Emaillist() {
 }
 
 export default Emaillist;
-

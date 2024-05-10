@@ -14,7 +14,6 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
     const [isRead, setIsRead] = useState(false);
 
     useEffect(() => {
-        // Check if the email has been read from local storage
         const readStatus = localStorage.getItem(`email_${id}_read`);
         setIsRead(readStatus === "true");
     }, [id]);
@@ -29,7 +28,6 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
         }));
         navigate('/mail');
         setIsRead(true);
-        // Update the read status in local storage
         localStorage.setItem(`email_${id}_read`, "true");
     };
     
@@ -39,7 +37,6 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
     const handleEmailClick = () => {
         if (isNew && !isRead) {
             setIsRead(true);
-            // Update the read status in local storage
             localStorage.setItem(`email_${id}_read`, "true");
         }
         handleOpenMessage();
@@ -55,7 +52,6 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
                 throw new Error('Failed to delete email');
             }
 
-            // Remove the email from local storage
             localStorage.removeItem(`email_${id}_read`);
             window.location.reload();
         } catch (error) {

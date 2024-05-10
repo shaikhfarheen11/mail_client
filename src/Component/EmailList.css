@@ -194,6 +194,14 @@ margin-right: 2rem;
 .emaildetails__middleheaderRight p{
     font-size: 14px;
 }
+.emaillist__SettingsRight .float-right {
+    display: flex; 
+}
+.emaillist__SettingsRight .float-right svg {
+    font-size: 18px; 
+    margin-left: 10px; 
+}
+
 .emaildetails_body{
     display: flex;
     font-size: large;
@@ -213,3 +221,7 @@ margin-right: 2rem;
     position: absolute;
 
   }
+  .text-right{
+    margin-right: 2rem !important;
+  }
+

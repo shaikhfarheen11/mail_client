@@ -5,10 +5,10 @@ import './EmailList.css';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { Row, Col } from 'react-bootstrap';
 import Avatar from '@material-ui/core/Avatar';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useSelector } from 'react-redux';
 import { selectedMail } from './store/mailSlice';
 import { IconButton } from '@material-ui/core';
-
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -30,7 +30,7 @@ function EmailDetails() {
   
   return (
     <div className="emaildetails">
-      <Header isRightCorner={true} />
+      <Header />
       <Row className="emaillist__Set">
         <Col className="emaillist__SettingsLeft">
           <ButtonGroup>

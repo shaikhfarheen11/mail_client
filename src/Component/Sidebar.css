@@ -1,6 +1,7 @@
 .sidebar{
     display: flex;
     flex-direction: column;
+    
 
 }
 .compose__btn{
@@ -15,3 +16,4 @@
     color: black;
     font-weight: 500;
 }
+
