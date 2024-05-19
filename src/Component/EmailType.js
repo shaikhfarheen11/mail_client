@@ -5,12 +5,12 @@ import PeopleIcon from '@material-ui/icons/People';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function EmailType() {
+function EmailType({ unreadCount }) {
     return (
         <Row className="emailtype">
             <Col xs={4} className="emailtype__options emailtype__options--active text-center">
                 <InboxIcon />
-                <p>Primary</p>
+                <p>Primary ({unreadCount})</p>
             </Col>
             <Col xs={4} className="emailtype__options text-center">
                 <PeopleIcon />

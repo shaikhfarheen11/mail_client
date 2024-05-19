@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Header from './Header';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -14,33 +14,14 @@ import Emailli from './Emailli';
 
 function Sent() {
   const navigate = useNavigate();
-  const [sentData, setSentData] = useState([]);
-
+  
   const handleArrowButtonClick = () => {
     navigate('/header');
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/sent.json');
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data = await response.json();
-        setSentData(data || []); 
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-  
-    fetchData();
-  }, []);
-  
-
   return (
     <div className="emaildetails">
-      <Header isRightCorner={true} />
+      <Header />
       <Row className="emaillist__Set">
         <Col className="emaillist__SettingsLeft">
           <ButtonGroup>
@@ -57,8 +38,8 @@ function Sent() {
             </Button>
           </ButtonGroup>
         </Col>
-        <Col className="emaillist__settingsRight"> 
-          <ButtonGroup className="ml-auto">
+        <Col className="emaillist__SettingsRight">
+          <ButtonGroup className="float-right">
             <Button variant="light">
               <RefreshIcon />
             </Button>
@@ -68,7 +49,10 @@ function Sent() {
           </ButtonGroup>
         </Col>
       </Row>
-      <Emailli folder="sent" data={sentData} />
+
+      <div className="emaillist-container">
+        <Emailli />
+      </div>
     </div>
   );
 }

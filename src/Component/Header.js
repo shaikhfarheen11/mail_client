@@ -8,10 +8,27 @@ import AppsIcon from "@material-ui/icons/Apps";
 import Sidebar from "./Sidebar";
 import GmailImage from './asset/Gmail.png';
 import { Button } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css';
 
 const Header = () => {
+    
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        const confirmLogout = window.confirm("Are you sure you want to logout?");
+        if (confirmLogout) {
+            localStorage.removeItem('authToken');
+            navigate('/login');
+        }
+    };
+    
+    const isAuthenticated = localStorage.getItem('authToken');
+    if (!isAuthenticated) {
+        navigate('/login');
+        return null; 
+    }
+    
     return (
         <div className="header">
             <div className="header__left">
@@ -42,6 +59,8 @@ const Header = () => {
                 <Button variant="link">
                     <AppsIcon />
                 </Button>
+                <Button varient="link" className="logout-button" onClick={handleLogout}>Logout</Button>
+
             </div>
             <Sidebar />
         </div>
@@ -49,4 +68,3 @@ const Header = () => {
 }
 
 export default Header;
-

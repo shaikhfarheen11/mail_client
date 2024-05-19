@@ -3,57 +3,94 @@ import { Container, Row, Col } from "react-bootstrap";
 import EmailListSetting from "./EmailListSetting";
 import EmailType from "./EmailType";
 import Emailbody from "./Emailbody";
-import db from "./firebase"; 
 import Compose from "./Compose";
 
 function Emaillist() {
     const [emails, setEmails] = useState([]);
 
+const fetchEmails = async () => {
+    try {
+        const response = await fetch("https://mail-client-da555-default-rtdb.firebaseio.com/emails.json");
+        if (!response.ok) {
+            throw new Error("Failed to fetch emails");
+        }
+        const data = await response.json();
+    
+        if (data) {
+            const emailsArray = Object.keys(data).map(key => {
+                const emailData = data[key];
+                const isNew = localStorage.getItem(`email_${key}_read`) !== "true";
+                return {
+                    id: key,
+                    data: emailData,
+                    isNew: isNew,
+                    isDeleted: false
+                };
+            });
+            setEmails(emailsArray);
+        }
+    } catch (error) {
+        console.error("Error fetching emails:", error);
+    }
+};
+
+
     useEffect(() => {
-        db.collection("emails").orderBy("timestamp","desc").onSnapshot(snapshot=>{
-            setEmails(snapshot.docs.map(doc=>({
-                id: doc.id,
-                data: doc.data(),
-                isNew: true 
-            })))
-        })
+        fetchEmails();
+
+        const interval = setInterval(fetchEmails, 2000);
+        return () => clearInterval(interval);
     }, []);
+   
 
     const handleSend = async (composedMessage) => {
-        try {
-            await db.collection("emails").add(composedMessage);
-            console.log("Message sent successfully");
-            setEmails([...emails, { id: Math.random(), data: composedMessage, isNew: true }]);
-        } catch (error) {
-            console.error("Error sending email:", error);
-        }
+        setEmails([...emails, { id: Math.random(), data: composedMessage, isNew: true }]);
     };
-    
-    
 
+    const handleDeleteEmail = (id) => {
+        setEmails(emails.map(email => email.id === id ? { ...email, isDeleted: true } : email));
+    
+        fetch(`https://mail-client-da555-default-rtdb.firebaseio.com/emails/${id}.json`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('Email deleted successfully from Firebase');
+        })
+        .catch(error => {
+            console.error('Error deleting email from Firebase:', error);
+            
+        });
+    };
+    const unreadCount = emails.filter(email => email.isNew && !email.isDeleted).length;
+    
     return (
         <div className="emaillist">
             <EmailListSetting />
-            <EmailType />
+            <EmailType unreadCount={unreadCount} />
             <Compose onSend={handleSend} /> 
             <Container fluid>
-                {emails.map(({ id, data, isNew }) => ( 
-                    <Row key={id}>
-                        <Col>
-                            <Emailbody
-                                name={data.to}
-                                subject={data.subject}
-                                message={data.message}
-                                time={data.timestamp}
-                                isNew={isNew} 
-                            />
-                        </Col>
-                    </Row>
+                {emails.map(({ id, data, isNew, isDeleted }) => ( 
+                    !isDeleted && (
+                        <Row key={id}>
+                            <Col>
+                                <Emailbody
+                                    id={id}
+                                    name={data.to}
+                                    subject={data.subject}
+                                    message={data.message}
+                                    time={data.timestamp}
+                                    isNew={isNew}
+                                    onDelete={() => handleDeleteEmail(id)} 
+                                />
+                            </Col>
+                        </Row>
+                    )
                 ))}
             </Container>
         </div>
     );
 }
-
 export default Emaillist;
-

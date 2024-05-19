@@ -18,7 +18,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { closeSendMessage } from "./store/mailSlice";
 import { useDispatch } from "react-redux";
 
-
 function Compose({ onSend }) {
     const [to, setTo] = useState("");
     const [subject, setSubject] = useState("");
@@ -68,34 +67,12 @@ function Compose({ onSend }) {
                 throw new Error('Failed to send data to the emails.json endpoint');
             }
     
-            const sentResponse = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/sent.json', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    to: sanitizedTo,
-                    subject: sanitizedSubject,
-                    message: sanitizedMessage,
-                    timestamp: currentTimestamp
-                }),
-            });
-    
-            if (!sentResponse.ok) {
-                throw new Error('Failed to send data to the sent.json endpoint');
-            }
-    
             console.log("Email sent successfully");
             setShowSuccessMessage(true);
             setTimestamp(currentTimestamp);
     
-            setTo("");
-            setSubject("");
-            setMessage("");
-    
             setTimeout(() => {
                 setShowSuccessMessage(false);
-                dispatch(closeSendMessage());
             }, 3000);
             onSend({
                 to: sanitizedTo,
@@ -125,16 +102,14 @@ function Compose({ onSend }) {
             <Form onSubmit={formSubmit}>
                 <div className="compose__body">
                     <div className="compose__bodyForm">
-                <Form.Group as={Row}>
-                   <Form.Control type="email" placeholder="Recipients" value={to} onChange={(e) => setTo(e.target.value)} />
-                            
-                 </Form.Group>
-              <Form.Group as={Row}>
-            <Form.Control type="text" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
-                   
-            </Form.Group>
-            <Form.Group as={Row}>
-           <Form.Control as="textarea" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
+                        <Form.Group as={Row}>
+                            <Form.Control type="email" placeholder="Recipients" value={to} onChange={(e) => setTo(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group as={Row}>
+                            <Form.Control type="text" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group as={Row}>
+                            <Form.Control as="textarea" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
                         </Form.Group>
                     </div>
                 </div>

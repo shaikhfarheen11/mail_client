@@ -6,9 +6,11 @@ import { openMessage } from "./store/mailSlice";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import LabelOutlinedIcon from "@material-ui/icons/LabelOutlined";
+import './EmailList.css';
 import Delete from "@material-ui/icons/Delete";
 
-function Emailbody({ id, name, subject, message, time, isNew }) {
+function Emailbody({ id, name, subject, message, time, isNew, onDelete }) {
+    
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [isRead, setIsRead] = useState(false);
@@ -42,18 +44,12 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
         handleOpenMessage();
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (e) => {
+        e.preventDefault(); 
+        e.stopPropagation(); 
+
         try {
-            const response = await fetch(`https://mail-client-da555-default-rtdb.firebaseio.com/${id}.json`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete email');
-            }
-
-            localStorage.removeItem(`email_${id}_read`);
-            window.location.reload();
+            await onDelete(id);
         } catch (error) {
             console.error('Error deleting email:', error);
         }
@@ -81,7 +77,8 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
                     <div className="emailbody__right">
                         <p>{messageDate}</p>
                         <p>{messageTime}</p>
-                        <div className="emailbody__delete" onClick={(e) => { e.stopPropagation(); handleDelete(); }}>
+                        <div className="emailbody__delete" onClick={handleDelete}>
+
                             <Button variant="link"><Delete /></Button>
                         </div>
                     </div>
@@ -92,4 +89,4 @@ function Emailbody({ id, name, subject, message, time, isNew }) {
     );
 }
 
-export default Emailbody;
+export default Emailbody;   

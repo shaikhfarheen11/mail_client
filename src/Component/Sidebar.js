@@ -21,25 +21,24 @@ function Sidebar() {
     const [isComposeOpen, setIsComposeOpen] = useState(false);
 
     const handleSidebarOpClick = (path) => {
-        console.log("Navigating to:", path); 
+        console.log("Navigating to:", path);
         navigate(path);
     };
 
-    const handleComposeOpen = () => {
-        setIsComposeOpen(true);
-        dispatch(openSendMessage());
-    };
-
-    const handleComposeClose = () => {
-        setIsComposeOpen(false);
-        dispatch(closeSendMessage());
+    const handleComposeToggle = () => {
+        setIsComposeOpen(!isComposeOpen);
+        if (!isComposeOpen) {
+            dispatch(openSendMessage());
+        } else {
+            dispatch(closeSendMessage());
+        }
     };
 
     return (
         <div className="sidebar">
             <Button
                 className="compose__btn"
-                onClick={handleComposeOpen} >
+                onClick={handleComposeToggle}>
                 <Row className="align-items-center">
                     <Col><AddIcon />Compose</Col>
                 </Row>
@@ -51,13 +50,13 @@ function Sidebar() {
             <SidebarOp Icon={StarRateIcon} title={"Starred"} number={500} onClick={() => handleSidebarOpClick("/starred")} />
             <SidebarOp Icon={WatchLaterIcon} title={"Snoozed"} number={300} onClick={() => handleSidebarOpClick("/snoozed")} />
             <SidebarOp Icon={LabelImportantIcon} title={"Important"} number={452} onClick={() => handleSidebarOpClick("/important")} />
-            
-            <div className="sidebar-link" onClick={() => handleSidebarOpClick("/sent")}>
+
+            <div className="sidebar-link sent-page" onClick={() => handleSidebarOpClick("/sent")}>
                 <SidebarOp Icon={SendIcon} title="Sent" isactive={true} />
             </div>
-            <SidebarOp Icon={DraftsIcon} title={"Drafts"} number={254} onClick={() => handleSidebarOpClick("/drafts")} />    
+            <SidebarOp Icon={DraftsIcon} title={"Drafts"} number={254} onClick={() => handleSidebarOpClick("/drafts")} />
 
-            <Compose isOpen={isComposeOpen} handleClose={handleComposeClose} />
+            <Compose isOpen={isComposeOpen} handleClose={() => setIsComposeOpen(false)} />
         </div>
     );
 }

@@ -10,13 +10,14 @@ import Compose from './Component/Compose';
 import { useSelector } from 'react-redux';
 import { selectSendMessageIsOpen } from './Component/store/mailSlice';
 import EmailDetails from './Component/EmailDetails';
-import Inbox from './Component/Inbox';
+// import Inbox from './Component/Inbox';
 import Sent from './Component/Sent';
 import ForgotPassword from './Component/ForgotPassword/ForgotPassword';
 
 function App() {
   const isMessageOpen = useSelector(selectSendMessageIsOpen);
   console.log(isMessageOpen);
+  
   return (
     <BrowserRouter>
 
@@ -28,12 +29,12 @@ function App() {
           <Route path="/sidebar" element={<Sidebar />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/mail" element={<EmailDetails />} />
+          <Route path="/sent" element={<Sent />} />
           </Routes>
           <div className='app__body'> 
         <Routes>
           <Route path="/header" element={<Emaillist />} />
-          <Route path="/inbox" element={<Inbox />} />
-          <Route path="/sent" element={<Sent />} />
+          {/* <Route path="/inbox" element={<Inbox />} /> */}
 
           {isMessageOpen && <Route path="/compose" element={<Compose />} />}
 

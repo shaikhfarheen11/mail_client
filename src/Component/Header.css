@@ -13,8 +13,8 @@
   .header__right {
     display: flex;
     align-items: center;
-    margin-left: auto; 
-}
+    justify-content: flex-end;
+  }
 
   
   .header__middle {
@@ -49,3 +49,6 @@
     margin-left: 3px;
   }
   
+  .logout-button {
+    margin-right: 2rem; 
+  }
