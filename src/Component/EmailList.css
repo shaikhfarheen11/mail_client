@@ -16,12 +16,7 @@ border-bottom: 1px solid whitesmoke;
     font-size: 18px;
     
 }
-.emaillist__settingsRight {
-    display: flex;
-    font-weight: bold;
-    margin-left: 70%;
 
-}
 .emaillist__settingsRight p {
     font-size: 13px;
 }

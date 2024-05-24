@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header';
+import Header from '../Header';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
@@ -9,7 +9,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import './EmailList.css';
+import './Sent.css';
 import Emailli from './Emailli';
 
 function Sent() {

@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { selectSendMessageIsOpen } from './Component/store/mailSlice';
 import EmailDetails from './Component/EmailDetails';
 // import Inbox from './Component/Inbox';
-import Sent from './Component/Sent';
+import Sent from './Component/Sent/Sent';
 import ForgotPassword from './Component/ForgotPassword/ForgotPassword';
 
 function App() {
@@ -20,7 +20,6 @@ function App() {
   
   return (
     <BrowserRouter>
-
         <Routes>
           <Route path="/" element={<Signup />} />
           <Route path="/signup" element={<Signup />} />
@@ -30,18 +29,16 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/mail" element={<EmailDetails />} />
           <Route path="/sent" element={<Sent />} />
-          </Routes>
-          <div className='app__body'> 
-        <Routes>
-          <Route path="/header" element={<Emaillist />} />
-          {/* <Route path="/inbox" element={<Inbox />} /> */}
-
-          {isMessageOpen && <Route path="/compose" element={<Compose />} />}
-
         </Routes>
-      </div>
-          </BrowserRouter>
-          )
+        <div className='app__body'> 
+          <Routes>
+            <Route path="/header" element={<Emaillist />} />
+            {/* <Route path="/inbox" element={<Inbox />} /> */}
+            {isMessageOpen && <Route path="/compose" element={<Compose />} />}
+          </Routes>
+        </div>
+    </BrowserRouter>
+  )
 }
 
 export default App;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './Compose.css';
 import RemoveIcon from '@material-ui/icons/Remove';
-import {Button, Form, Row } from 'react-bootstrap';
+import { Button, Form, Row } from 'react-bootstrap';
 import HeightIcon from '@material-ui/icons/Height';
 import CloseIcon from '@material-ui/icons/Close';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -15,20 +15,20 @@ import PhonelinkLockIcon from '@material-ui/icons/PhonelinkLock';
 import CreateIcon from '@material-ui/icons/Create';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { closeSendMessage } from "./store/mailSlice";
-import { useDispatch } from "react-redux";
+import useFetch from './useFetch';
 
-function Compose({ onSend }) {
+function Compose({ onSend, isOpen, handleClose }) {
     const [to, setTo] = useState("");
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [timestamp, setTimestamp] = useState("");
-    const dispatch = useDispatch();
-
-    const handleClose = () => {
-        dispatch(closeSendMessage());
-    };
+    const { fetchData, isLoading, error } = useFetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
     const formSubmit = async (e) => {
         e.preventDefault();
@@ -39,55 +39,53 @@ function Compose({ onSend }) {
         if (!sanitizedTo.includes("@")) {
             return alert("Please enter a valid email address");
         }
-    
+
         if (sanitizedSubject === "") {
             return alert("Subject is required");
         }
         if (sanitizedMessage === "") {
             return alert("Message is required");
         }
-    
+
         const currentTimestamp = new Date().toLocaleString();
-    
+
         try {
-            const emailsResponse = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    to: sanitizedTo,
-                    subject: sanitizedSubject,
-                    message: sanitizedMessage,
-                    timestamp: currentTimestamp
-                }),
+            await fetchData({
+                to: sanitizedTo,
+                subject: sanitizedSubject,
+                message: sanitizedMessage,
+                timestamp: currentTimestamp,
             });
-    
-            if (!emailsResponse.ok) {
-                throw new Error('Failed to send data to the emails.json endpoint');
-            }
-    
-            console.log("Email sent successfully");
+
             setShowSuccessMessage(true);
             setTimestamp(currentTimestamp);
-    
+
             setTimeout(() => {
                 setShowSuccessMessage(false);
             }, 3000);
+
             onSend({
                 to: sanitizedTo,
                 subject: sanitizedSubject,
                 message: sanitizedMessage,
                 timestamp: currentTimestamp
             });
-        } catch (error) {
-            console.error("Error sending email:", error);
+
+            setTo("");
+            setSubject("");
+            setMessage("");
+        } catch (err) {
+            console.error("Error sending email:", err);
         }
     };
-    
+
+    if (!isOpen) return null;
+
     return (
-        <div className="compose">
-            <div className="success-message" style={{ display: showSuccessMessage ? "block" : "none" }}>Email sent successfully at {timestamp}</div>
+        <div className="compose compose-fixed">
+            <div className="success-message" style={{ display: showSuccessMessage ? "block" : "none" }}>
+                Email sent successfully at {timestamp}
+            </div>
 
             <div className="compose__header">
                 <div className="compose__header__left">
@@ -103,18 +101,33 @@ function Compose({ onSend }) {
                 <div className="compose__body">
                     <div className="compose__bodyForm">
                         <Form.Group as={Row}>
-                            <Form.Control type="email" placeholder="Recipients" value={to} onChange={(e) => setTo(e.target.value)} />
+                            <Form.Control
+                                type="email"
+                                placeholder="Recipients"
+                                value={to}
+                                onChange={(e) => setTo(e.target.value)}
+                            />
                         </Form.Group>
                         <Form.Group as={Row}>
-                            <Form.Control type="text" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
+                            <Form.Control
+                                type="text"
+                                placeholder="Subject"
+                                value={subject}
+                                onChange={(e) => setSubject(e.target.value)}
+                            />
                         </Form.Group>
                         <Form.Group as={Row}>
-                            <Form.Control as="textarea" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
+                            <Form.Control
+                                as="textarea"
+                                placeholder="Message"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                            />
                         </Form.Group>
                     </div>
                 </div>
                 <div className="compose__footer">
-                    <Button type="submit">
+                    <Button type="submit" disabled={isLoading}>
                         Send <ArrowDropDownIcon />
                     </Button>
                     <div className="compose__footerRight">
@@ -131,6 +144,7 @@ function Compose({ onSend }) {
                     </div>
                 </div>
             </Form>
+            {error && <div className="error-message">{error}</div>}
         </div>
     );
 }

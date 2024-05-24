@@ -1,0 +1,26 @@
+.emaillist__Set {
+    display: flex;
+    margin-top: 2rem;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    justify-content: space-between;
+border-bottom: 1px solid whitesmoke;
+margin-left: 16rem;
+margin-right: 2rem;
+}
+.emaillist__Set svg{
+    font-size: 18px;
+}
+.emaillist__settingsRight {
+    display: flex;
+    font-weight: bold;
+    margin-left: 70%;
+
+}
+.emaillist__settingsRight p {
+    font-size: 13px;
+}
+.emaillist-container .emailbody {
+    margin-left: 15%; 
+}
