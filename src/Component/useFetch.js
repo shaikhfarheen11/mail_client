@@ -1,37 +1,42 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 const useFetch = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const fetchData = async (url, options = {}, data = null) => {
-        setIsLoading(true);
-        setError(null);
+  const sendRequest = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
+    setIsLoading(true);
+    setError(null);
 
-        try {
-            const response = await fetch(url, {
-                ...options,
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...options.headers
-                },
-                body: data ? JSON.stringify(data) : null,
-            });
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        body: body ? JSON.stringify(body) : null,
+      });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch data');
-            }
+      if (!response.ok) {
+        throw new Error('Request failed!');
+      }
 
-            return await response.json();
-        } catch (err) {
-            setError(err.message);
-            throw err;
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      const data = await response.json();
+      setIsLoading(false);
+      return data;
+    } catch (err) {
+      setError(err.message || 'Something went wrong!');
+      setIsLoading(false);
+      throw err;
+    }
+  }, []);
 
-    return { fetchData, isLoading, error };
+  return {
+    isLoading,
+    error,
+    sendRequest,
+  };
 };
 
 export default useFetch;

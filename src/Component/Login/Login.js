@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import classes from './Login.module.css';
+import useFetch from '../useFetch'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,37 +11,27 @@ const Login = () => {
   const [loginError, setLoginError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { sendRequest } = useFetch(); // Use your custom hook
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCV5PF3StNEQRWcAvE_gDgzP_yU9ltwkuA';
-      const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          password,
-          returnSecureToken: true,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await sendRequest('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCV5PF3StNEQRWcAvE_gDgzP_yU9ltwkuA', 'POST', {
+        email,
+        password,
+        returnSecureToken: true,
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const token = data.idToken;
-        const userId = data.localId;
+      if (response) {
+        const token = response.idToken;
+        const userId = response.localId;
 
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('authToken', token);
         localStorage.setItem('userId', userId);
 
         console.log('User has successfully logged in. Token:', token);
-        navigate('/header'); 
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error.message);
+        navigate('/header');
       }
     } catch (error) {
       console.error('Login failed:', error.message);

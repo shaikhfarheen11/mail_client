@@ -1,78 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import EmailListSetting from "./EmailListSetting";
 import EmailType from "./EmailType";
 import Emailbody from "./Emailbody";
 import Compose from "./Compose";
+import useFetch from "./useFetch";
 
 function Emaillist() {
     const [emails, setEmails] = useState([]);
+    const { isLoading, error, sendRequest } = useFetch();
 
-const fetchEmails = async () => {
-    try {
-        const response = await fetch("https://mail-client-da555-default-rtdb.firebaseio.com/emails.json");
-        if (!response.ok) {
-            throw new Error("Failed to fetch emails");
+    const fetchEmails = useCallback(async () => {
+        try {
+            const data = await sendRequest("https://mail-client-da555-default-rtdb.firebaseio.com/emails.json");
+            if (data) {
+                const emailsArray = Object.keys(data).map(key => {
+                    const emailData = data[key];
+                    const isNew = localStorage.getItem(`email_${key}_read`) !== "true";
+                    return {
+                        id: key,
+                        data: emailData,
+                        isNew: isNew,
+                        isDeleted: false
+                    };
+                });
+                setEmails(emailsArray);
+            }
+        } catch (error) {
+            console.error("Error fetching emails:", error);
         }
-        const data = await response.json();
-    
-        if (data) {
-            const emailsArray = Object.keys(data).map(key => {
-                const emailData = data[key];
-                const isNew = localStorage.getItem(`email_${key}_read`) !== "true";
-                return {
-                    id: key,
-                    data: emailData,
-                    isNew: isNew,
-                    isDeleted: false
-                };
-            });
-            setEmails(emailsArray);
-        }
-    } catch (error) {
-        console.error("Error fetching emails:", error);
-    }
-};
-
+    }, [sendRequest]);
 
     useEffect(() => {
-        fetchEmails();
-
         const interval = setInterval(fetchEmails, 2000);
         return () => clearInterval(interval);
-    }, []);
-   
+    }, [fetchEmails]);
 
     const handleSend = async (composedMessage) => {
-        setEmails([...emails, { id: Math.random(), data: composedMessage, isNew: true }]);
+        try {
+            const data = await sendRequest(
+                "https://mail-client-da555-default-rtdb.firebaseio.com/emails.json",
+                "POST",
+                composedMessage
+            );
+            setEmails([...emails, { id: data.name, data: composedMessage, isNew: true }]);
+        } catch (error) {
+            console.error("Error sending email:", error);
+        }
     };
 
-    const handleDeleteEmail = (id) => {
+    const handleDeleteEmail = async (id) => {
         setEmails(emails.map(email => email.id === id ? { ...email, isDeleted: true } : email));
-    
-        fetch(`https://mail-client-da555-default-rtdb.firebaseio.com/emails/${id}.json`, {
-            method: 'DELETE',
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+
+        try {
+            await sendRequest(
+                `https://mail-client-da555-default-rtdb.firebaseio.com/emails/${id}.json`,
+                "DELETE"
+            );
             console.log('Email deleted successfully from Firebase');
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error deleting email from Firebase:', error);
-            
-        });
+        }
     };
+
     const unreadCount = emails.filter(email => email.isNew && !email.isDeleted).length;
-    
+
     return (
         <div className="emaillist">
             <EmailListSetting />
             <EmailType unreadCount={unreadCount} />
-            <Compose onSend={handleSend} /> 
+            <Compose onSend={handleSend} />
+            {isLoading && <p>Loading...</p>}
+            {error && <p>{error}</p>}
             <Container fluid>
-                {emails.map(({ id, data, isNew, isDeleted }) => ( 
+                {emails.map(({ id, data, isNew, isDeleted }) => (
                     !isDeleted && (
                         <Row key={id}>
                             <Col>
@@ -83,7 +84,7 @@ const fetchEmails = async () => {
                                     message={data.message}
                                     time={data.timestamp}
                                     isNew={isNew}
-                                    onDelete={() => handleDeleteEmail(id)} 
+                                    onDelete={() => handleDeleteEmail(id)}
                                 />
                             </Col>
                         </Row>
@@ -93,4 +94,5 @@ const fetchEmails = async () => {
         </div>
     );
 }
+
 export default Emaillist;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import classes from './Signup.module.css';
+import useFetch from '../useFetch';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const Signup = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const navigate = useNavigate();
+  const { sendRequest } = useFetch();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -20,44 +22,22 @@ const Signup = () => {
     }
 
     try {
-      const url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=YOUR_API_KEY'; // Replace with your API key
-
-      if (password.length < 6) {
-        console.error('Password should be at least 6 characters long.');
-        return;
-      }
-
-      if (!/\d/.test(password)) {
-        console.error('Password should contain at least one digit.');
-        return;
-      }
-
-      const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          password,
-          returnSecureToken: true,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await sendRequest('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCV5PF3StNEQRWcAvE_gDgzP_yU9ltwkuA', 'POST', {
+        email,
+        password,
+        returnSecureToken: true,
       });
 
-      const data = await response.json();
+      if (response) {
+        console.log('User has successfully signed up:', response);
 
-      if (!response.ok) {
-        throw new Error(data.error.message);
+        setSignupSuccess(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
       }
-
-      console.log('User has successfully signed up:', data);
-
-      setSignupSuccess(true);
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
     } catch (error) {
-      console.error('Signup failed:', error);
+      console.error('Signup failed:', error.message);
     }
   };
 
