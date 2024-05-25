@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header';
+import Header from './Inbox/Header';
 import { useNavigate } from 'react-router-dom'; 
 import './EmailList.css';
 import { Button, ButtonGroup } from 'react-bootstrap';
@@ -25,7 +25,7 @@ function EmailDetails() {
   const mail = useSelector(selectedMail);
   const navigate = useNavigate(); 
   const handleArrowButtonClick = () => {
-    navigate('/header'); 
+    navigate('/inbox'); 
   };
   
   return (

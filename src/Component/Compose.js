@@ -15,20 +15,20 @@ import PhonelinkLockIcon from '@material-ui/icons/PhonelinkLock';
 import CreateIcon from '@material-ui/icons/Create';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
-import useFetch from './useFetch';
 
-function Compose({ onSend, isOpen, handleClose }) {
+function Compose({ isOpen, handleClose }) {
     const [to, setTo] = useState("");
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [timestamp, setTimestamp] = useState("");
-    const { fetchData, isLoading, error } = useFetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleSendEmail = (emailData) => {
+        // Logic to send email
+        console.log('Sending email:', emailData);
+    };
 
     const formSubmit = async (e) => {
         e.preventDefault();
@@ -49,13 +49,44 @@ function Compose({ onSend, isOpen, handleClose }) {
 
         const currentTimestamp = new Date().toLocaleString();
 
+        setIsLoading(true);
+
         try {
-            await fetchData({
-                to: sanitizedTo,
-                subject: sanitizedSubject,
-                message: sanitizedMessage,
-                timestamp: currentTimestamp,
+            // Send email to general emails collection
+            const response = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/emails.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: sanitizedTo,
+                    subject: sanitizedSubject,
+                    message: sanitizedMessage,
+                    timestamp: currentTimestamp
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to send data to the emails.json endpoint');
+            }
+
+            // Send email to sent emails collection
+            const sentResponse = await fetch('https://mail-client-da555-default-rtdb.firebaseio.com/sentEmails.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: sanitizedTo,
+                    subject: sanitizedSubject,
+                    message: sanitizedMessage,
+                    timestamp: currentTimestamp
+                }),
+            });
+
+            if (!sentResponse.ok) {
+                throw new Error('Failed to send data to the sentEmails.json endpoint');
+            }
 
             setShowSuccessMessage(true);
             setTimestamp(currentTimestamp);
@@ -64,7 +95,7 @@ function Compose({ onSend, isOpen, handleClose }) {
                 setShowSuccessMessage(false);
             }, 3000);
 
-            onSend({
+            handleSendEmail({
                 to: sanitizedTo,
                 subject: sanitizedSubject,
                 message: sanitizedMessage,
@@ -76,6 +107,9 @@ function Compose({ onSend, isOpen, handleClose }) {
             setMessage("");
         } catch (err) {
             console.error("Error sending email:", err);
+            setError(err.message || "An error occurred while sending email");
+        } finally {
+            setIsLoading(false);
         }
     };
 

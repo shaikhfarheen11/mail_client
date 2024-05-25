@@ -1,12 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 import ReorderIcon from "@material-ui/icons/Reorder";
 import SearchIcon from "@material-ui/icons/Search";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import SettingsIcon from "@material-ui/icons/Settings";
 import AppsIcon from "@material-ui/icons/Apps";
-import Sidebar from "./Sidebar";
-import GmailImage from './asset/Gmail.png';
+import Sidebar from "../Sidebar";
+import GmailImage from '../asset/Gmail.png';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -15,6 +15,13 @@ import './Header.css';
 const Header = () => {
     
     const navigate = useNavigate();
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem('authToken');
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [navigate]);
+
     const handleLogout = () => {
         const confirmLogout = window.confirm("Are you sure you want to logout?");
         if (confirmLogout) {
@@ -22,12 +29,7 @@ const Header = () => {
             navigate('/login');
         }
     };
-    
-    const isAuthenticated = localStorage.getItem('authToken');
-    if (!isAuthenticated) {
-        navigate('/login');
-        return null; 
-    }
+
     
     return (
         <div className="header">

@@ -45,7 +45,7 @@ function Sidebar() {
             </Button>
 
             <div className="sidebar-link" onClick={() => handleSidebarOpClick("/inbox")}>
-                <SidebarOp Icon={InboxIcon} title="Inbox" number="224" isactive={true} />
+                <SidebarOp Icon={InboxIcon} title="Inbox" isactive={true} />
             </div>
             <SidebarOp Icon={StarRateIcon} title={"Starred"} number={500} onClick={() => handleSidebarOpClick("/starred")} />
             <SidebarOp Icon={WatchLaterIcon} title={"Snoozed"} number={300} onClick={() => handleSidebarOpClick("/snoozed")} />

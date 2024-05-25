@@ -14,6 +14,7 @@ function Emailbody({ id, name, subject, message, time, isNew, onDelete }) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [isRead, setIsRead] = useState(false);
+   
 
     useEffect(() => {
         const readStatus = localStorage.getItem(`email_${id}_read`);
@@ -60,6 +61,7 @@ function Emailbody({ id, name, subject, message, time, isNew, onDelete }) {
             <Row className="align-items-center">
                 <Col>
                     <div className="emailbody__left">
+            
                         <CheckBoxOutlineBlankIcon />
                         <StarBorderIcon />
                         <LabelOutlinedIcon />

@@ -6,12 +6,24 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 function EmailListSetting(){
+    const navigate = useNavigate();
+
+    const handleArrowButtonClick = () => {
+        navigate('/header');
+    }
+
+
     return (
         <div className="emaillist__Settings">
             <div className="emaillist__SettingsLeft">
                 <ButtonGroup>
+                    <Button variant="light" onClick={handleArrowButtonClick}>
+                        <ArrowBackIcon />
+                        </Button>
                     <Button variant="light">
                         <CheckBoxOutlineBlankIcon/>
                     </Button>
